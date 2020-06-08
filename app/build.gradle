@@ -46,8 +46,13 @@ dependencies {
     implementation 'androidx.ui:ui-layout:0.1.0-dev09'
     implementation 'androidx.ui:ui-material:0.1.0-dev09'
     implementation 'androidx.ui:ui-tooling:0.1.0-dev09'
+
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
+    
+    implementation "org.koin:koin-core:2.1.5"
+    implementation "org.koin:koin-android:2.1.5"
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
