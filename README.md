@@ -1,0 +1,1 @@
+Simple app displaying lottery draw results.
