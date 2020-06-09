@@ -70,8 +70,7 @@ fun DrawResultListItemView_Success() {
 @Composable
 fun DrawResultListItemView(result: Result<DrawInfo>) {
     Card(
-        modifier = Modifier.preferredHeight(80.dp).fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+        modifier = Modifier.preferredHeight(80.dp).fillMaxWidth().padding(bottom = 8.dp)
     ) {
         Box(modifier = Modifier.padding(8.dp)) {
             when (result) {

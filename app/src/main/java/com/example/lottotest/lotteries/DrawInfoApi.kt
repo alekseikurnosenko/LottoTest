@@ -20,7 +20,7 @@ data class DrawInfoListItem(
 )
 
 interface DrawInfoApi {
-    @GET("/drawinfo/{lotteryId}/draws?past=100&future=0")
+    @GET("/drawinfo/{lotteryId}/draws?past=10&future=0")
     fun drawsList(@Path("lotteryId") lotteryId: String): Call<List<DrawInfoListItem>>
 
     @GET("/drawinfo/{lotteryId}/{drawIdentifier}")

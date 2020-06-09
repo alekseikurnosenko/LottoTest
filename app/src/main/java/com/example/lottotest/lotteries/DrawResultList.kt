@@ -6,10 +6,13 @@ import androidx.compose.onCommit
 import androidx.compose.state
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.AdapterList
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.VerticalScroller
+import androidx.ui.layout.Column
 import androidx.ui.layout.fillMaxSize
+import androidx.ui.layout.padding
+import androidx.ui.unit.dp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,12 +32,16 @@ fun DrawResultList(api: DrawInfoApi, lotteryType: LotteryType) {
             }
         }
         is Result.Success -> {
-            AdapterList(data = result.data) { item ->
-                DrawResultListItem(
-                    api,
-                    lotteryType,
-                    item.drawIdentifier
-                )
+            VerticalScroller {
+                Column(modifier = Modifier.padding(8.dp)) {
+                    result.data.map {
+                        DrawResultListItem(
+                            api,
+                            lotteryType,
+                            it.drawIdentifier
+                        )
+                    }
+                }
             }
         }
     }
