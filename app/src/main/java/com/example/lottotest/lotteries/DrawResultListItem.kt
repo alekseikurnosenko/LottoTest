@@ -1,6 +1,5 @@
 package com.example.lottotest.lotteries
 
-import android.util.MalformedJsonException
 import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.state
@@ -19,9 +18,7 @@ import androidx.ui.text.TextStyle
 import androidx.ui.text.font.FontWeight
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 @Composable
 fun DrawResultListItem(api: DrawInfoApi, lotteryType: LotteryType, drawIdentifier: String) {
@@ -180,27 +177,18 @@ private fun getDrawInfoById(
     val (result, setResult) = state<Result<DrawInfo>> { Result.Loading }
 
     onCommit(lotteryId, drawIdentifier) {
-        api.drawInfoById(lotteryId, drawIdentifier).enqueue(object : Callback<DrawInfo> {
-            override fun onFailure(call: Call<DrawInfo>, t: Throwable) {
-                setResult(Result.Error(t))
+        val disposable = api.drawInfoById(lotteryId, drawIdentifier)
+            .map<Result<DrawInfo>> { Result.Success(it) }
+            .onErrorReturn { Result.Error(it) }
+            .startWith(Result.Loading)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { result ->
+                setResult(result)
             }
 
-            override fun onResponse(
-                call: Call<DrawInfo>,
-                response: Response<DrawInfo>
-            ) {
-                val body = response.body()
-                if (body != null) {
-                    setResult(Result.Success(body))
-                } else {
-                    setResult(
-                        Result.Error(
-                            MalformedJsonException("Got empty body")
-                        )
-                    )
-                }
-            }
-        })
+        onDispose {
+            disposable.dispose()
+        }
     }
 
     return result

@@ -8,6 +8,7 @@ import androidx.ui.material.Scaffold
 import androidx.ui.material.Tab
 import androidx.ui.material.TabRow
 import androidx.ui.material.TopAppBar
+import androidx.ui.unit.dp
 
 data class LotteryType(val displayName: String, val id: String)
 
@@ -21,7 +22,8 @@ fun LotteriesScreen(api: DrawInfoApi) {
     Scaffold(
         topAppBar = {
             TopAppBar(
-                title = { Text(text = "Lotteries") }
+                title = { Text(text = "Lotteries") },
+                elevation = 0.dp
             )
         }
     ) {
@@ -31,6 +33,7 @@ fun LotteriesScreen(api: DrawInfoApi) {
             TabRow(
                 items = tabItems,
                 selectedIndex = lotteries.indexOf(currentSelection)
+
             ) { index, title ->
                 Tab(
                     text = { Text(title) },

@@ -1,6 +1,6 @@
 package com.example.lottotest.lotteries
 
-import retrofit2.Call
+import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -21,12 +21,12 @@ data class DrawInfoListItem(
 
 interface DrawInfoApi {
     @GET("/drawinfo/{lotteryId}/draws?past=10&future=0")
-    fun drawsList(@Path("lotteryId") lotteryId: String): Call<List<DrawInfoListItem>>
+    fun drawsList(@Path("lotteryId") lotteryId: String): Observable<List<DrawInfoListItem>>
 
     @GET("/drawinfo/{lotteryId}/{drawIdentifier}")
     fun drawInfoById(
         @Path("lotteryId") lotteryId: String,
         @Path("drawIdentifier") drawIdentifier: String
-    ): Call<DrawInfo>
+    ): Observable<DrawInfo>
 
 }

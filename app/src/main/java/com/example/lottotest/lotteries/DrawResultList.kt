@@ -1,6 +1,5 @@
 package com.example.lottotest.lotteries
 
-import android.util.MalformedJsonException
 import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.state
@@ -13,9 +12,7 @@ import androidx.ui.layout.Column
 import androidx.ui.layout.fillMaxSize
 import androidx.ui.layout.padding
 import androidx.ui.unit.dp
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 @Composable
 fun DrawResultList(api: DrawInfoApi, lotteryType: LotteryType) {
@@ -52,29 +49,18 @@ fun getDrawInfoList(api: DrawInfoApi, lotteryType: LotteryType): Result<List<Dra
     val (result, setResult) = state<Result<List<DrawInfoListItem>>> { Result.Loading }
 
     onCommit(lotteryType.id) {
-        setResult(Result.Loading)
-        api.drawsList(lotteryType.id).enqueue(object : Callback<List<DrawInfoListItem>> {
-            override fun onFailure(call: Call<List<DrawInfoListItem>>, t: Throwable) {
-                setResult(Result.Error(t))
+        val disposable = api.drawsList(lotteryType.id)
+            .map<Result<List<DrawInfoListItem>>> { Result.Success(it.reversed()) }
+            .onErrorReturn { Result.Error(it) }
+            .startWith(Result.Loading)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { result ->
+                setResult(result)
             }
 
-            override fun onResponse(
-                call: Call<List<DrawInfoListItem>>,
-                response: Response<List<DrawInfoListItem>>
-            ) {
-                val body = response.body()
-                if (body != null) {
-                    // Because we want to display most recent results first
-                    setResult(Result.Success(body.reversed()))
-                } else {
-                    setResult(
-                        Result.Error(
-                            MalformedJsonException("Got empty body")
-                        )
-                    )
-                }
-            }
-        })
+        onDispose {
+            disposable.dispose()
+        }
     }
 
     return result
